@@ -1,0 +1,824 @@
+<title>Apex</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Apex: новые и подержанные автомобили премиум-класса. Проверяем каждую машину, называем итоговую цену сразу, приглашаем на тест-драйв.">
+<meta name="theme-color" content="#E8EDE8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,700;0,800;1,700&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a showroom where the photos are the only things that move.
+     Hero is a story reel of every car; the catalog is an index with a live stage; the steps carry their own photos.
+     Type: Alegreya for headlines and prices, Onest for reading. Palette: five tokens, one committed light look. */
+  :root{
+    --paper:#E8EDE8;
+    --paper-deep:#D6DED7;
+    --ink:#15231D;
+    --ink-soft:#44544B;
+    --forest:#1F4A3B;
+    --sticker:#F0C03A;
+    --line:#BCC8BF;
+    --serif:'Alegreya',Georgia,'Times New Roman',serif;
+    --sans:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --gutter:max(20px,env(safe-area-inset-left,0px));
+    --gutter-r:max(20px,env(safe-area-inset-right,0px));
+    --bleed:calc((min(100vw,1240px) - 100vw)/2 - var(--gutter-r));
+    --ease:cubic-bezier(.2,.75,.2,1);
+    color-scheme:light;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--paper);z-index:60}
+  img{display:block;max-width:100%;height:auto}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--serif);font-weight:800;line-height:1.02;margin:0;text-wrap:balance}
+  p{margin:0}
+  ul,ol{margin:0;padding:0;list-style:none}
+  button{font-family:inherit}
+  :focus-visible{outline:3px solid var(--forest);outline-offset:3px;border-radius:2px}
+  .wrap{width:100%;max-width:1240px;margin-inline:auto;padding-inline:var(--gutter) var(--gutter-r)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .skip{position:absolute;left:12px;top:-60px;background:var(--forest);color:#fff;padding:10px 14px;border-radius:4px;z-index:100}
+  .skip:focus{top:calc(env(safe-area-inset-top,0px) + 8px)}
+  section[id],#visit{scroll-margin-top:84px}
+
+  /* shiny button: a light runs around the edge, speeds up and fills on hover */
+  @property --ga{syntax:"<angle>";initial-value:0deg;inherits:false}
+  @property --gao{syntax:"<angle>";initial-value:0deg;inherits:false}
+  @property --gp{syntax:"<percentage>";initial-value:5%;inherits:false}
+  @property --gs{syntax:"<color>";initial-value:#fff;inherits:false}
+  .btn{--b-bg:var(--ink);--b-sub:#26372E;--b-fg:#F3F6F2;--hl:var(--sticker);--hl-sub:#F8DF8E;--dur:3s;
+    isolation:isolate;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:54px;padding:0 30px;border:1px solid transparent;border-radius:360px;color:var(--b-fg);font:600 1rem/1.2 var(--sans);text-decoration:none;cursor:pointer;
+    background:linear-gradient(var(--b-bg),var(--b-bg)) padding-box,conic-gradient(from calc(var(--ga) - var(--gao)),transparent,var(--hl) var(--gp),var(--gs) calc(var(--gp)*2),var(--hl) calc(var(--gp)*3),transparent calc(var(--gp)*4)) border-box;
+    box-shadow:inset 0 0 0 1px var(--b-sub);
+    transition:800ms cubic-bezier(.25,1,.5,1);transition-property:--gao,--gp,--gs,box-shadow}
+  .btn::before,.btn::after{content:"";pointer-events:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:-1}
+  .btn::before{width:calc(100% - 6px);height:calc(100% - 6px);background:radial-gradient(circle at 2px 2px,#fff .5px,transparent 0) padding-box;background-size:4px 4px;background-repeat:space;-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg),#000,transparent 10% 90%,#000);mask-image:conic-gradient(from calc(var(--ga) + 45deg),#000,transparent 10% 90%,#000);border-radius:inherit;opacity:.4}
+  .btn::after{width:100%;aspect-ratio:1;background:linear-gradient(-50deg,transparent,var(--hl),transparent);-webkit-mask-image:radial-gradient(circle at bottom,transparent 40%,#000);mask-image:radial-gradient(circle at bottom,transparent 40%,#000);opacity:.2;transition:opacity .8s;animation:shimmer 3s linear infinite paused}
+  .btn:is(:hover,:focus-visible)::after{opacity:.55}
+  .btn,.btn::before{animation:ga var(--dur) linear infinite,ga calc(var(--dur)/.4) linear infinite reverse paused;animation-composition:add}
+  .btn:is(:hover,:focus-visible){--gp:20%;--gao:95deg;--gs:var(--hl-sub);box-shadow:inset 0 0 0 1px var(--b-sub),0 10px 28px -10px rgba(240,192,58,.65)}
+  .btn:is(:hover,:focus-visible),.btn:is(:hover,:focus-visible)::before,.btn:is(:hover,:focus-visible)::after{animation-play-state:running}
+  .btn:active{transform:scale(.97)}
+  @keyframes ga{to{--ga:360deg}}
+  @keyframes shimmer{to{rotate:360deg}}
+  .btn-sticker{--hl:#fff;--hl-sub:#fff;--b-bg:var(--ink)}
+  .btn-sticker::after{background:linear-gradient(-50deg,transparent,var(--sticker),transparent)}
+  .btn-sm{min-height:42px;padding:0 18px;font-size:.95rem}
+  .link{background:linear-gradient(currentColor,currentColor) 0 100%/100% 1.5px no-repeat;text-decoration:none;padding-bottom:2px;transition:background-size .35s var(--ease);font-weight:500;cursor:pointer;border:0;font-family:inherit;font-size:inherit;color:inherit}
+  .link:hover{background-size:0 1.5px;background-position:100% 100%}
+
+  /* header */
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(232,237,232,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:box-shadow .3s}
+  .top.scrolled{box-shadow:0 10px 26px -18px rgba(21,35,29,.5)}
+  .bar{display:flex;align-items:center;gap:28px;min-height:68px}
+  .brand{font:800 1.75rem/1 var(--serif);text-decoration:none;letter-spacing:.005em;margin-right:auto}
+  #nav{display:flex;gap:28px}
+  #nav a{text-decoration:none;font-weight:500;color:var(--ink-soft);padding:6px 0;background:linear-gradient(var(--forest),var(--forest)) 0 100%/0 2px no-repeat;transition:background-size .3s var(--ease),color .2s}
+  #nav a:hover{color:var(--ink);background-size:100% 2px}
+  .phone{font-weight:600;text-decoration:none;white-space:nowrap}
+  .menu-btn{display:none;min-height:42px;padding:0 16px;border:1.5px solid var(--ink);border-radius:4px;background:transparent;font:600 .95rem var(--sans);color:var(--ink);cursor:pointer}
+
+  /* the stage: every photo on the site sits on one of these */
+  .stage{position:relative}
+  .stage-in{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:3px;background:var(--paper-deep);transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .6s var(--ease)}
+  .stage-in::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:5;background:radial-gradient(520px circle at var(--gx,50%) var(--gy,40%),rgba(255,255,255,.36),transparent 62%);mix-blend-mode:soft-light;opacity:0;transition:opacity .5s}
+  .stage.lit .stage-in::after{opacity:1}
+  .stage-in img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .bleed .stage-in{border-radius:3px 0 0 3px}
+  @media (min-width:901px){.bleed{margin-right:var(--bleed)}.bleed>.film-cap,.bleed>.show-cap{padding-right:max(var(--gutter-r),calc(var(--gutter-r) - var(--bleed)))}}
+
+  /* price sticker */
+  .tag{position:absolute;display:inline-flex;flex-direction:column;gap:1px;padding:.55rem 1rem .62rem 1.75rem;background:var(--sticker);color:var(--ink);border-radius:4px 14px 14px 4px;box-shadow:0 1px 0 rgba(21,35,29,.22),0 12px 22px -10px rgba(21,35,29,.55);transform:rotate(-3deg);transform-origin:12% 50%;text-decoration:none;z-index:7}
+  .tag::before{content:"";position:absolute;left:.62rem;top:50%;width:.62rem;height:.62rem;margin-top:-.31rem;border-radius:50%;background:rgba(21,35,29,.3);box-shadow:inset 0 1px 1px rgba(0,0,0,.35)}
+  .tag small{font-size:.78rem;line-height:1.2;font-weight:500}
+  .tag b{font:800 1.3rem/1.1 var(--serif);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .tag .t-name{font-weight:600;font-size:.92rem;line-height:1.2}
+  .swap{animation:drop .9s cubic-bezier(.3,1.5,.5,1)}
+  @keyframes drop{0%{opacity:0;transform:translateY(-60px) rotate(11deg)}55%{opacity:1;transform:translateY(7px) rotate(-5deg)}100%{opacity:1;transform:rotate(-3deg)}}
+
+  /* hero: the story reel */
+  .hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,72px);align-items:center;padding-block:clamp(28px,5vw,64px) clamp(48px,6vw,96px)}
+  .hero-text{min-width:0}
+  h1{font-size:clamp(2.8rem,6.2vw,5.6rem);letter-spacing:-.012em}
+  .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .04em .12em;margin:0 -.04em -.12em}
+  .w>span{display:inline-block;transform:translateY(108%);animation:rise .95s var(--ease) forwards;animation-delay:calc(var(--i)*75ms + 120ms)}
+  @keyframes rise{to{transform:none}}
+  .lead{max-width:30em;margin-top:clamp(20px,2.6vw,32px);font-size:clamp(1.05rem,1.5vw,1.2rem);color:var(--ink-soft);opacity:0;animation:fade .8s var(--ease) 1s forwards}
+  .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;margin-top:clamp(24px,3vw,36px);opacity:0;animation:fade .8s var(--ease) 1.12s forwards}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .film{--dur:6.5s}
+  .film-in{clip-path:inset(0 0 100% 0);animation:wipe 1.15s cubic-bezier(.65,0,.2,1) .2s forwards}
+  @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+  .film-in::before{content:"";position:absolute;inset:0 0 auto;height:76px;background:linear-gradient(rgba(10,18,14,.5),transparent);z-index:4;pointer-events:none}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease}
+  .slide.on{opacity:1;z-index:2}
+  .slide.out{z-index:1}
+  .slide.on img,.slide.out img{animation:kb var(--dur) linear forwards}
+  @keyframes kb{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.15) translate(var(--kx,-2%),var(--ky,-1.5%))}}
+  .film.paused .slide img,.film.paused .seg.on i{animation-play-state:paused}
+  .film-bar{position:absolute;left:14px;right:14px;top:8px;display:flex;gap:6px;z-index:6}
+  .seg{flex:1;display:block;padding:7px 0;border:0;background:none;cursor:pointer}
+  .trk{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.42);overflow:hidden}
+  .seg i{display:block;height:100%;background:#fff;transform:scaleX(0);transform-origin:left}
+  .seg.done i{transform:scaleX(1)}
+  .seg.on i{animation:fillseg var(--dur) linear forwards}
+  @keyframes fillseg{to{transform:scaleX(1)}}
+  .film-ctl{position:absolute;right:14px;bottom:14px;display:flex;gap:8px;z-index:6}
+  .film-ctl button{width:40px;height:40px;border-radius:50%;border:0;background:rgba(21,35,29,.55);color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(6px);transition:background .2s}
+  .film-ctl button:hover{background:rgba(21,35,29,.82)}
+  .film-ctl svg{display:block}
+  .film-ctl .ic-play{display:none}
+  .film.user-paused .ic-play{display:block}
+  .film.user-paused .ic-pause{display:none}
+  .film-tag{left:-52px;bottom:20%;opacity:0;animation:drop 1.1s cubic-bezier(.3,1.5,.5,1) 1.15s forwards}
+  .film-tag b{font-size:1.6rem}
+  .film-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;margin-top:14px;color:var(--ink-soft);font-size:.95rem;opacity:0;animation:fade .8s var(--ease) 1.5s forwards}
+
+  /* shared section rhythm */
+  .sec{padding-block:clamp(56px,8vw,112px)}
+  h2{font-size:clamp(2.1rem,4.6vw,3.7rem);letter-spacing:-.008em}
+
+  /* showroom: an index with a live stage */
+  .finder{margin-top:clamp(22px,3vw,36px);font:700 clamp(1.5rem,3.2vw,2.35rem)/1.5 var(--serif);max-width:26em}
+  .finder select{appearance:none;-webkit-appearance:none;font:inherit;color:var(--forest);background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' viewBox='0 0 16 10'%3E%3Cpath d='M2 2l6 6 6-6' fill='none' stroke='%231F4A3B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right .1em center/.5em no-repeat;border:0;border-bottom:2.5px solid var(--forest);border-radius:0;padding:0 1.15em .02em .05em;margin:0 .1em;cursor:pointer;max-width:100%}
+  .finder select:hover{border-bottom-color:var(--ink)}
+  .count{margin-top:12px;color:var(--ink-soft);font-size:.95rem;min-height:1.6em}
+  .show-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,72px);align-items:start;margin-top:clamp(20px,3vw,32px)}
+  .show-stage{position:sticky;top:96px}
+  .sl{position:absolute;inset:0;clip-path:inset(0 100% 0 0)}
+  .sl.from-b{clip-path:inset(100% 0 0 0)}
+  .sl.from-t{clip-path:inset(0 0 100% 0)}
+  .sl.wipe{clip-path:inset(0 0 0 0);transition:clip-path .8s cubic-bezier(.65,0,.2,1)}
+  .sl.now{transition:none}
+  .sl img{transform:scale(1.2)}
+  .sl.wipe img{transform:scale(1.05);transition:transform 1.5s var(--ease);animation:drift 16s ease-in-out 1.5s infinite alternate}
+  .sl.now img{transition:none}
+  @keyframes drift{from{transform:scale(1.05) translate(0,0)}to{transform:scale(1.11) translate(-1.4%,-1%)}}
+  .stage-in .tag{left:16px;bottom:18px}
+  .show-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;margin-top:14px;color:var(--ink-soft);font-size:.95rem}
+  .row{position:relative;border-top:1px solid var(--line);opacity:.55;transition:opacity .35s}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .row.active,.row:focus-within{opacity:1}
+  .row::before{content:"";position:absolute;left:0;top:30px;width:13px;height:13px;border-radius:50%;background:var(--sticker);box-shadow:inset 0 1px 1px rgba(0,0,0,.3);transform:scale(0);transition:transform .45s cubic-bezier(.3,1.7,.5,1)}
+  .row.active::before{transform:scale(1)}
+  .row-link{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 16px;padding:20px 0;text-decoration:none;transition:padding .45s var(--ease),color .3s}
+  .row.active .row-link{padding-left:30px;color:var(--forest)}
+  .row-name{font:700 clamp(1.5rem,2.3vw,2.1rem)/1.1 var(--serif)}
+  .row-price{font:600 1rem/1.4 var(--sans);font-variant-numeric:tabular-nums;white-space:nowrap;align-self:center}
+  .row-meta{grid-column:1/-1;font-size:.9rem;color:var(--ink-soft);font-weight:400}
+  .row-photo{display:none}
+  .row.enter{animation:rowin .55s var(--ease) backwards}
+  @keyframes rowin{from{opacity:0;transform:translateY(14px)}to{opacity:.55;transform:none}}
+  .empty{margin-top:28px;font-size:1.1rem}
+
+  /* how we work: the photo follows the step */
+  .how{background:var(--paper-deep)}
+  .how-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,7vw,110px);align-items:start}
+  .how-side{position:sticky;top:96px}
+  .how-side>p{margin-top:18px;max-width:26em;color:var(--ink-soft)}
+  .how-stage{margin-top:26px}
+  .how-stage .stage-in{background:var(--paper)}
+  .fl{position:absolute;inset:0;opacity:0;transition:opacity 1s ease}
+  .fl.on{opacity:1}
+  .fl.now{transition:none}
+  .fl img{animation:drift 14s ease-in-out infinite alternate}
+  .how-cap{margin-top:12px;color:var(--ink-soft);font-size:.95rem;min-height:1.6em}
+  .steps li{display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:8px 18px;padding-block:30px;border-top:1px solid var(--line);opacity:.4;transition:opacity .5s}
+  .steps li:last-child{border-bottom:1px solid var(--line)}
+  .steps li.act{opacity:1}
+  .steps{counter-reset:s}
+  .steps li{counter-increment:s}
+  .steps li::before{content:counter(s);font:800 3rem/.9 var(--serif);color:var(--forest)}
+  .steps h3{font-size:1.65rem;line-height:1.1}
+  .steps p{margin-top:8px;color:var(--ink-soft);max-width:34em}
+  .step-photo{display:none}
+
+  /* salons */
+  .salons-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 40px;margin-bottom:clamp(24px,3vw,40px)}
+  .salons-head p{color:var(--ink-soft);max-width:26em}
+  .salon{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1fr);gap:8px 40px;padding-block:28px;border-top:1px solid var(--line);align-items:start}
+  .salon:last-child{border-bottom:1px solid var(--line)}
+  .salon h3{font-size:clamp(1.5rem,2.4vw,2rem)}
+  .salon address{font-style:normal}
+  .salon small{display:block;color:var(--ink-soft);font-size:.93rem;margin-top:4px}
+
+  /* visit form */
+  .visit{background:var(--forest);color:#F1F5F0}
+  .visit-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:start}
+  .visit h2{color:#F7FAF6}
+  .visit .sub{margin-top:18px;max-width:26em;color:#CBD9D0}
+  .visit .call{margin-top:28px;font-size:1.05rem;color:#CBD9D0}
+  .visit .call a{color:#fff;font:800 1.9rem/1.2 var(--serif);text-decoration:none;display:inline-block;margin-top:4px}
+  form.f{display:grid;gap:18px}
+  .fld{display:grid;gap:6px}
+  .fld label{font-size:.93rem;font-weight:500;color:#DCE7E0}
+  .fld input,.fld select{width:100%;min-height:52px;padding:0 14px;border-radius:4px;border:2px solid transparent;background:#F1F5F0;color:var(--ink);font:400 1rem var(--sans)}
+  .fld input:focus-visible,.fld select:focus-visible{outline:3px solid var(--sticker);outline-offset:2px}
+  .fld input[aria-invalid="true"]{border-color:#E9876F}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .err{min-height:1.4em;font-size:.93rem;color:#FFC9BB}
+  .done{padding:28px;border:2px solid rgba(255,255,255,.35);border-radius:4px}
+  .done h3{font-size:2rem;color:#fff}
+  .done p{margin-top:10px;color:#DCE7E0}
+
+  /* car page */
+  .view-in{animation:viewin .55s var(--ease)}
+  @keyframes viewin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .back{display:inline-flex;align-items:center;gap:8px;margin-top:clamp(20px,3vw,34px);color:var(--forest);font-weight:600;text-decoration:none}
+  .back svg{transition:transform .3s var(--ease)}
+  .back:hover svg{transform:translateX(-4px)}
+  .cd-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(26px,5vw,72px);padding-block:clamp(20px,3vw,36px) clamp(48px,7vw,96px);align-items:start}
+  .cd-photo{position:sticky;top:96px}
+  .cd-photo .stage-in .tag{left:16px;bottom:18px;animation:drop 1s cubic-bezier(.3,1.5,.5,1) .35s both}
+  .cd-photo .tag b{font-size:1.7rem}
+  .cd-photo img{transform:scale(1.04);animation:drift 16s ease-in-out infinite alternate}
+  .cd-info h1{font-size:clamp(2.4rem,5vw,4rem)}
+  .cd-info .meta{margin-top:10px;color:var(--ink-soft)}
+  .cd-info .about{margin-top:22px;max-width:32em}
+  .quote{margin-top:24px;max-width:26em;font:italic 700 1.4rem/1.3 var(--serif)}
+  .quote small{display:block;margin-top:6px;font:400 .9rem var(--sans);color:var(--ink-soft)}
+  .specs{display:grid;grid-template-columns:auto 1fr;gap:0;margin:30px 0 0;max-width:30em}
+  .specs dt,.specs dd{padding-block:11px;border-top:1px solid var(--line);margin:0}
+  .specs dt{color:var(--ink-soft);padding-right:28px}
+  .specs dd{font-weight:600}
+  .specs dt:last-of-type,.specs dd:last-of-type{border-bottom:1px solid var(--line)}
+  .cd-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin-top:30px}
+  .cd-info>*{animation:fade .8s var(--ease) calc(var(--k,0)*85ms + 260ms) both}
+  .more{padding-bottom:clamp(48px,7vw,96px)}
+  .more h2{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+  .mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:24px}
+  .mini a{display:block;text-decoration:none}
+  .mini .ph{aspect-ratio:4/3;overflow:hidden;border-radius:3px;background:var(--paper-deep)}
+  .mini img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+  .mini a:hover img{transform:scale(1.06)}
+  .mini strong{display:block;margin-top:10px;font:700 1.3rem/1.15 var(--serif)}
+  .mini span{color:var(--ink-soft);font-size:.95rem}
+  ::view-transition-group(carphoto){animation-duration:.7s;animation-timing-function:cubic-bezier(.2,.75,.2,1)}
+
+  .foot{padding-block:44px 52px;border-top:1px solid var(--line)}
+  .foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px 56px}
+  .foot p{color:var(--ink-soft);font-size:.93rem;max-width:30em;margin-top:8px}
+  .foot .legal{margin-top:28px;font-size:.85rem}
+
+  .mbar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:none;gap:10px;padding:10px var(--gutter-r) calc(10px + env(safe-area-inset-bottom,0px)) var(--gutter);background:rgba(232,237,232,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);transition:transform .35s var(--ease)}
+  .mbar.off{transform:translateY(110%)}
+  .mbar .btn{flex:1;min-height:48px;padding:0 12px}
+  .mbar .btn-out{--b-bg:var(--paper);--b-fg:var(--ink);--b-sub:var(--ink);--hl:var(--forest);--hl-sub:var(--forest)}
+
+  @media (max-width:1000px){
+    .phone{display:none}
+    .visit-grid{grid-template-columns:minmax(0,1fr)}
+    .salon{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .salon h3{grid-column:1/-1}
+  }
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:minmax(0,1fr);gap:0;padding-top:22px}
+    .hero-text{display:contents}
+    h1{order:1}
+    .film{order:2;margin:26px calc(-1*var(--gutter-r)) 0 calc(-1*var(--gutter))}
+    .lead{order:3}.hero-actions{order:4}
+    .film-in,.bleed .stage-in{border-radius:0}
+    .film-tag{left:14px;bottom:62px}
+    .film-cap{padding-inline:var(--gutter) var(--gutter-r)}
+    .show-grid{grid-template-columns:minmax(0,1fr);gap:0}
+    .show-stage{display:none}
+    .row{opacity:1;border:0;margin-bottom:38px}
+    .row:last-child{border:0}
+    .row::before{display:none}
+    .row-photo{display:block;position:relative;margin:0 0 14px;aspect-ratio:4/3;overflow:hidden;border-radius:3px;background:var(--paper-deep)}
+    .row-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.16)}
+    .row-photo .tag{left:12px;bottom:14px}
+    .row-link{padding:0;display:block}
+    .row.active .row-link{padding-left:0;color:inherit}
+    .row-price{display:none}
+    .row-name{font-size:1.7rem}
+    .how-grid{grid-template-columns:minmax(0,1fr)}
+    .how-side{position:static}
+    .how-stage,.how-cap{display:none}
+    .steps{margin-top:8px}
+    .steps li{opacity:1;grid-template-columns:2.6rem minmax(0,1fr);padding-block:22px}
+    .steps li::before{font-size:2.5rem}
+    .step-photo{display:block;order:-1;grid-column:1/-1;position:relative;margin:0 0 6px;aspect-ratio:16/10;overflow:hidden;border-radius:3px;background:var(--paper)}
+    .step-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.16)}
+    .cd-grid{grid-template-columns:minmax(0,1fr)}
+    .cd-photo{position:relative;top:auto}
+  }
+  @media (max-width:720px){
+    body{font-size:16.5px;padding-bottom:78px}
+    .bar{gap:12px;min-height:62px}
+    .menu-btn{display:inline-flex;align-items:center}
+    .bar .btn-sm{display:none}
+    #nav{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;padding:6px var(--gutter-r) 18px var(--gutter);background:var(--paper);border-bottom:1px solid var(--line)}
+    #nav.open{display:flex}
+    #nav a{font:700 1.7rem/1 var(--serif);color:var(--ink);padding:16px 0;border-bottom:1px solid var(--line);background:none}
+    h1{font-size:clamp(2.9rem,14vw,4.2rem)}
+    .hero-actions .link{display:none}
+    .finder{font-size:1.55rem;line-height:1.7}
+    .finder select{display:block;margin:4px 0;width:100%}
+    .salon{grid-template-columns:minmax(0,1fr)}
+    .two{grid-template-columns:minmax(0,1fr)}
+    .mini{grid-template-columns:minmax(0,1fr);gap:20px}
+    .mini a{display:grid;grid-template-columns:128px minmax(0,1fr);gap:14px;align-items:center}
+    .mini strong{margin-top:0}
+    .mbar{display:flex}
+    .specs{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .w>span{transform:none}
+    .btn,.btn::before,.btn::after{animation:none!important}
+    .lead,.hero-actions,.film-cap,.film-tag{opacity:1}
+    .film-in{clip-path:none}
+    .film-tag{transform:rotate(-3deg)}
+    .seg.on i{transform:scaleX(1)}
+    .sl img,.row-photo img,.step-photo img{transform:none}
+  }
+</style>
+
+<a class="skip" href="#main">К содержимому</a>
+
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="#home" aria-label="Apex, на главную">Apex</a>
+    <nav id="nav" aria-label="Основная">
+      <a href="#catalog">Машины</a>
+      <a href="#how">Как покупают</a>
+      <a href="#salons">Салоны</a>
+    </nav>
+    <a class="phone" href="tel:+78003332211">8 (800) 333-22-11</a>
+    <a class="btn btn-sm" href="#visit">Записаться</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav">Меню</button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div id="homeView">
+    <section class="hero" aria-labelledby="h1">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1 id="h1" aria-label="Машины, которые мы сами бы купили.">
+            <span class="w" aria-hidden="true" style="--i:0"><span>Машины,</span></span>
+            <span class="w" aria-hidden="true" style="--i:1"><span>которые</span></span>
+            <span class="w" aria-hidden="true" style="--i:2"><span>мы</span></span>
+            <span class="w" aria-hidden="true" style="--i:3"><span>сами</span></span>
+            <span class="w" aria-hidden="true" style="--i:4"><span>бы</span></span>
+            <span class="w" aria-hidden="true" style="--i:5"><span>купили.</span></span>
+          </h1>
+          <p class="lead">Берём в салон только те автомобили, на которых поехали бы сами. Каждую проверяем, честно рассказываем, что с ней было, и сразу называем итоговую цену.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#catalog">Смотреть машины</a>
+            <a class="link" href="#visit">Записаться на просмотр</a>
+          </div>
+        </div>
+        <div class="film stage bleed" id="film" role="group" aria-roledescription="карусель" aria-label="Машины в наличии">
+          <div class="stage-in film-in" id="filmIn">
+            <div id="filmSlides"></div>
+            <div class="film-bar" id="filmBar"></div>
+            <div class="film-ctl">
+              <button type="button" id="fPrev" aria-label="Предыдущая машина"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button type="button" id="fPause" aria-label="Остановить смену машин"><svg class="ic-pause" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><svg class="ic-play" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg></button>
+              <button type="button" id="fNext" aria-label="Следующая машина"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+          </div>
+          <a class="tag film-tag" id="filmTag" href="#audi-q8"><small>в наличии</small><span class="t-name" id="filmName">Audi Q8 55 TFSI</span><b id="filmPrice">{{HERO_PRICE}}</b></a>
+          <p class="film-cap"><span id="filmSpec"></span><a class="link" id="filmLink" href="#audi-q8">Страница машины</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="catalog" aria-labelledby="h-cat">
+      <div class="wrap">
+        <h2 id="h-cat">Что сейчас в салоне</h2>
+        <form class="finder" id="finder" onsubmit="return false" aria-label="Подбор машины">
+          Ищу
+          <label class="sr" for="f-body">Кузов</label>
+          <select id="f-body"><option value="">любой кузов</option><option value="suv">внедорожник</option><option value="sedan">седан</option><option value="coupe">купе</option></select>,
+          <label class="sr" for="f-price">Цена</label>
+          <select id="f-price"><option value="">любая цена</option><option value="5000000">до 5 млн ₽</option><option value="8000000">до 8 млн ₽</option><option value="10000000">до 10 млн ₽</option></select>,
+          <label class="sr" for="f-cond">Состояние</label>
+          <select id="f-cond"><option value="">новые и с пробегом</option><option value="new">только новые</option><option value="used">только с пробегом</option></select>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="show-grid" id="showGrid">
+          <ul class="idx" id="idx">
+{{ROWS}}
+          </ul>
+          <div class="show-stage stage bleed" id="showStage">
+            <div class="stage-in" id="showIn">
+              <a class="tag" id="showTag" href="#audi-q8"><small>цена</small><b id="showPrice"></b></a>
+            </div>
+            <p class="show-cap"><span id="showSpec"></span><a class="link" id="showLink" href="#audi-q8">Открыть страницу машины</a></p>
+          </div>
+        </div>
+        <p class="empty" id="empty" hidden>Таких машин сейчас нет. <button class="link" type="button" id="reset">Показать все</button> или <a class="link" href="#visit">оставьте заявку</a>, подберём под заказ.</p>
+      </div>
+    </section>
+
+    <section class="sec how" id="how" aria-labelledby="h-how">
+      <div class="wrap how-grid">
+        <div class="how-side">
+          <h2 id="h-how">Как у нас покупают</h2>
+          <p>Пять шагов, без спешки. Если какой-то шаг вам не нужен, мы его пропустим.</p>
+          <div class="how-stage stage" id="howStage"><div class="stage-in" id="howIn"></div></div>
+          <p class="how-cap" id="howCap"></p>
+        </div>
+        <ol class="steps" id="steps">
+          <li data-photo="volvo-s80"><figure class="step-photo"><img alt="" width="960" height="720"></figure><div><h3>Приезжаете или звоните</h3><p>Можно без записи. Расскажете, что ищете, а мы покажем подходящие машины и сразу назовём цену.</p></div></li>
+          <li data-photo="lexus-is"><figure class="step-photo"><img alt="" width="960" height="720"></figure><div><h3>Садитесь за руль</h3><p>Тест-драйв на любой машине из каталога. Спокойно проедете по городу и по трассе, никто не торопит.</p></div></li>
+          <li data-photo="audi-a6"><figure class="step-photo"><img alt="" width="960" height="720"></figure><div><h3>Оцениваем вашу машину</h3><p>Если меняете, посмотрим вашу за 30 минут и вычтем её стоимость из цены новой.</p></div></li>
+          <li data-photo="bmw-m4"><figure class="step-photo"><img alt="" width="960" height="720"></figure><div><h3>Выбираем, как платить</h3><p>Работаем с 12 банками, решение по кредиту или лизингу даём в день обращения. Можно заплатить сразу.</p></div></li>
+          <li data-photo="mercedes-e300"><figure class="step-photo"><img alt="" width="960" height="720"></figure><div><h3>Забираете ключи</h3><p>Оформляем документы за один визит, страхуем, если нужно. Дальше ждём вас в своём техцентре.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="salons" aria-labelledby="h-sal">
+      <div class="wrap">
+        <div class="salons-head">
+          <h2 id="h-sal">Где нас найти</h2>
+          <p>Все салоны работают каждый день с 9:00 до 21:00. Парковка для гостей бесплатная.</p>
+        </div>
+        <div>
+          <article class="salon"><h3>Москва</h3><address>Ленинградское шоссе, 39<small>Напротив торгового центра, въезд со стороны шоссе</small></address><div><a class="link" href="tel:+74951184002">+7 (495) 118-40-02</a></div></article>
+          <article class="salon"><h3>Краснодар</h3><address>ул. Аэропортовская, 12<small>Рядом с остановкой «Аэропорт», вход со двора</small></address><div><a class="link" href="tel:+78612201455">+7 (861) 220-14-55</a></div></article>
+          <article class="salon"><h3>Санкт-Петербург</h3><address>Пулковское шоссе, 25<small>Первое здание после поворота на аэропорт</small></address><div><a class="link" href="tel:+78123360819">+7 (812) 336-08-19</a></div></article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="carView" hidden></div>
+</main>
+
+<section class="sec visit" id="visit" aria-labelledby="h-visit">
+  <div class="wrap visit-grid">
+    <div>
+      <h2 id="h-visit">Запишитесь на просмотр</h2>
+      <p class="sub">Напишите, какую машину хотите посмотреть и когда удобно. Мы позвоним, чтобы подтвердить время, и подготовим её к вашему приезду.</p>
+      <p class="call">Или позвоните сами<br><a href="tel:+78003332211">8 (800) 333-22-11</a></p>
+    </div>
+    <div id="formWrap">
+      <form class="f" id="visitForm" novalidate>
+        <div class="two">
+          <div class="fld"><label for="v-name">Как к вам обращаться</label><input id="v-name" name="name" type="text" autocomplete="given-name" required></div>
+          <div class="fld"><label for="v-phone">Телефон</label><input id="v-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="8 900 123-45-67" required></div>
+        </div>
+        <div class="two">
+          <div class="fld"><label for="v-car">Что хотите посмотреть</label>
+            <select id="v-car" name="car"><option value="">Пока не знаю</option>{{CAR_OPTIONS}}</select></div>
+          <div class="fld"><label for="v-when">Когда удобно</label>
+            <select id="v-when" name="when"><option>Сегодня</option><option>Завтра</option><option>В выходные</option><option>Позвоните, договоримся</option></select></div>
+        </div>
+        <p class="err" id="formErr" role="alert"></p>
+        <button class="btn btn-sticker" type="submit">Записаться на просмотр</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a class="brand" href="#home" style="margin:0">Apex</a><p>Новые и подержанные автомобили премиум-класса. Салоны в Москве, Краснодаре и Санкт-Петербурге.</p></div>
+      <div><a class="phone" href="tel:+78003332211" style="display:inline">8 (800) 333-22-11</a><p>Каждый день с 9:00 до 21:00</p></div>
+    </div>
+    <p class="legal">© 2026 Apex. Информация на сайте носит справочный характер и не является публичной офертой.</p>
+  </div>
+</footer>
+
+<div class="mbar" id="mbar">
+  <a class="btn btn-out" href="tel:+78003332211">Позвонить</a>
+  <a class="btn" href="#visit">Записаться</a>
+</div>
+
+<script type="application/json" id="imgs">{{IMGS}}</script>
+<script>
+(function(){
+  var CARS = {{DATA}};
+  var IMG = JSON.parse(document.getElementById('imgs').textContent);
+  var BASE_TITLE = 'Apex';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var mq = window.matchMedia('(max-width:900px)');
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var homeView = $('#homeView'), carView = $('#carView'), main = $('#main');
+  var NO_SWITCH = { visit: 1, main: 1 };
+  var view = 'home';
+  var NB = ' ';
+
+  function group(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, NB); }
+  function money(n){ return group(n) + NB + '₽'; }
+  function byId(id){ for (var i = 0; i < CARS.length; i++) if (CARS[i].id === id) return CARS[i]; return null; }
+  function condText(c){ return c.cond === 'new' ? 'Новый' : 'С пробегом ' + group(c.km) + NB + 'км'; }
+  function metaText(c){ return condText(c) + ', ' + c.engine + ', ' + c.power + ' л.с., ' + c.drive + ' привод, ' + c.gear; }
+  function mk(html){ var d = document.createElement('div'); d.innerHTML = html; return d.firstChild; }
+
+  /* header */
+  var top = $('#top'), menuBtn = $('#menuBtn'), nav = $('#nav');
+  menuBtn.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.textContent = open ? 'Закрыть' : 'Меню';
+  });
+  function closeMenu(){ nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.textContent = 'Меню'; }
+  $$('#nav a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+
+  /* light and tilt: a photo answers the cursor */
+  function light(stage){
+    if (!stage || !fine || reduce) return;
+    stage.addEventListener('pointermove', function(e){
+      var r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      stage.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+      stage.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+      stage.style.setProperty('--ry', ((x - .5) * 6).toFixed(2) + 'deg');
+      stage.style.setProperty('--rx', ((.5 - y) * 5).toFixed(2) + 'deg');
+      stage.classList.add('lit');
+    });
+    stage.addEventListener('pointerleave', function(){
+      stage.classList.remove('lit');
+      stage.style.setProperty('--rx', '0deg'); stage.style.setProperty('--ry', '0deg');
+    });
+  }
+
+  /* ---------- hero reel ---------- */
+  var ORDER = ['audi-q8','mercedes-e300','bmw-m4','lexus-rx','porsche-macan','bmw-x5','lexus-is','audi-a6','volvo-s80','lexus-nx'];
+  var DRIFT = [[-2,-1.5],[2,-1],[-1.5,1.6],[1.8,1.2],[-2.2,.6],[.4,-2]];
+  var film = $('#film'), filmIn = $('#filmIn'), slidesEl = $('#filmSlides'), bar = $('#filmBar');
+  var ftag = $('#filmTag'), slides = [], segs = [], fIdx = -1, fCur = null;
+  var userPaused = false, hovering = false, onScreen = true;
+  ORDER.forEach(function(id, i){
+    var c = byId(id), d = DRIFT[i % DRIFT.length];
+    var s = mk('<div class="slide" style="--kx:' + d[0] + '%;--ky:' + d[1] + '%"><img alt="' + c.alt + '" width="960" height="720" decoding="async"></div>');
+    s.firstChild.src = IMG[id];
+    slidesEl.appendChild(s); slides.push(s);
+    var b = mk('<button class="seg" type="button" aria-label="' + c.name + '"><span class="trk"><i></i></span></button>');
+    b.addEventListener('click', function(){ goFilm(i); });
+    bar.appendChild(b); segs.push(b);
+  });
+  function syncPause(){ film.classList.toggle('paused', userPaused || hovering || !onScreen || document.hidden); }
+  function goFilm(i){
+    var n = ORDER.length; i = (i + n) % n;
+    if (i === fIdx) return;
+    var prev = slides[fIdx];
+    if (prev) { prev.classList.remove('on'); prev.classList.add('out'); (function(p){ setTimeout(function(){ p.classList.remove('out'); }, 1300); })(prev); }
+    slides[i].classList.remove('out'); slides[i].classList.add('on');
+    segs.forEach(function(s, k){ s.classList.toggle('done', k < i); s.classList.remove('on'); });
+    void bar.offsetWidth; segs[i].classList.add('on');
+    fIdx = i; fCur = ORDER[i];
+    var c = byId(fCur);
+    $('#filmName').textContent = c.name; $('#filmPrice').textContent = money(c.price);
+    ftag.href = '#' + c.id; $('#filmLink').href = '#' + c.id;
+    $('#filmSpec').textContent = metaText(c);
+    ftag.style.opacity = 1; ftag.classList.remove('swap'); void ftag.offsetWidth; if (fIdx > 0 || ftag.dataset.ready) ftag.classList.add('swap'); ftag.dataset.ready = 1;
+  }
+  bar.addEventListener('animationend', function(e){ if (e.animationName === 'fillseg') goFilm(fIdx + 1); });
+  $('#fPrev').addEventListener('click', function(){ goFilm(fIdx - 1); });
+  $('#fNext').addEventListener('click', function(){ goFilm(fIdx + 1); });
+  $('#fPause').addEventListener('click', function(){
+    userPaused = !userPaused; film.classList.toggle('user-paused', userPaused);
+    this.setAttribute('aria-label', userPaused ? 'Продолжить смену машин' : 'Остановить смену машин');
+    syncPause();
+  });
+  film.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse') { hovering = true; syncPause(); } });
+  film.addEventListener('pointerleave', function(){ hovering = false; syncPause(); });
+  var sx = null;
+  filmIn.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, { passive: true });
+  filmIn.addEventListener('touchend', function(e){ if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) goFilm(fIdx + (dx < 0 ? 1 : -1)); }, { passive: true });
+  document.addEventListener('visibilitychange', syncPause);
+  if ('IntersectionObserver' in window) new IntersectionObserver(function(es){ onScreen = es[0].isIntersecting; syncPause(); }, { threshold: .2 }).observe(film);
+  light(film);
+  goFilm(0);
+
+  /* ---------- showroom ---------- */
+  var rows = $$('.row'), idxList = $('#idx'), showStage = $('#showStage'), showIn = $('#showIn'), sTag = $('#showTag');
+  var stageId = null;
+  var cnt = $('#count'), emptyEl = $('#empty');
+  var fBody = $('#f-body'), fPrice = $('#f-price'), fCond = $('#f-cond');
+  function visRows(){ return rows.filter(function(r){ return !r.hidden; }); }
+  function setActive(id, instant){
+    if (id === stageId) return;
+    var vis = visRows().map(function(r){ return r.dataset.id; });
+    var oi = vis.indexOf(stageId), ni = vis.indexOf(id);
+    stageId = id;
+    rows.forEach(function(r){ r.classList.toggle('active', r.dataset.id === id); });
+    var c = byId(id);
+    var layer = mk('<div class="sl ' + (ni >= oi ? 'from-b' : 'from-t') + (instant ? ' now' : '') + '"><img alt="' + c.alt + '" width="960" height="720" decoding="async"></div>');
+    layer.firstChild.src = IMG[id];
+    showIn.insertBefore(layer, sTag);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ layer.classList.add('wipe'); }); });
+    setTimeout(function(){ var all = $$('.sl', showIn); all.forEach(function(l, k){ if (k < all.length - 1 && all[all.length - 1].classList.contains('wipe')) l.remove(); }); }, instant ? 50 : 1000);
+    $('#showPrice').textContent = money(c.price);
+    sTag.href = '#' + id; $('#showLink').href = '#' + id; $('#showSpec').textContent = metaText(c);
+    if (!instant) { sTag.classList.remove('swap'); void sTag.offsetWidth; sTag.classList.add('swap'); }
+  }
+  rows.forEach(function(r){
+    r.addEventListener('pointerenter', function(e){ if (!mq.matches && e.pointerType === 'mouse') setActive(r.dataset.id); });
+    r.addEventListener('focusin', function(){ if (!mq.matches) setActive(r.dataset.id); });
+  });
+  light(showStage);
+  function plural(n){ var a = n % 10, b = n % 100; return (a === 1 && b !== 11) ? 'машина' : (a >= 2 && a <= 4 && (b < 12 || b > 14)) ? 'машины' : 'машин'; }
+  function paint(first){
+    var n = 0, firstId = null;
+    rows.forEach(function(c){
+      var ok = (!fBody.value || c.dataset.body === fBody.value) &&
+               (!fPrice.value || +c.dataset.price <= +fPrice.value) &&
+               (!fCond.value || c.dataset.cond === fCond.value);
+      c.hidden = !ok;
+      if (ok){ if (n === 0) firstId = c.dataset.id; n++; }
+    });
+    cnt.textContent = n === rows.length ? 'Показываем все ' + n + ' ' + plural(n) : 'Подходит ' + n + ' из ' + rows.length;
+    emptyEl.hidden = n !== 0;
+    showStage.hidden = n === 0;
+    if (n) {
+      var cur = stageId && !$('.row[data-id="' + stageId + '"]').hidden ? stageId : firstId;
+      if (cur !== stageId) setActive(cur, first); else { rows.forEach(function(r){ r.classList.toggle('active', r.dataset.id === stageId); }); }
+    }
+  }
+  function applyFilters(){
+    var first = {};
+    rows.forEach(function(c){ if (!c.hidden) first[c.dataset.id] = c.getBoundingClientRect(); });
+    paint(false);
+    if (reduce) return;
+    rows.forEach(function(c){
+      if (c.hidden) return;
+      var f = first[c.dataset.id];
+      if (!f) { c.classList.remove('enter'); void c.offsetWidth; c.classList.add('enter'); return; }
+      var l = c.getBoundingClientRect(), dy = f.top - l.top;
+      if (!dy) return;
+      c.style.transition = 'none'; c.style.transform = 'translateY(' + dy + 'px)';
+      void c.offsetWidth;
+      c.style.transition = 'transform .65s cubic-bezier(.2,.75,.2,1),opacity .35s'; c.style.transform = '';
+      setTimeout(function(){ c.style.transition = ''; }, 700);
+    });
+  }
+  [fBody, fPrice, fCond].forEach(function(s){ s.addEventListener('change', applyFilters); });
+  $('#reset').addEventListener('click', function(){ fBody.value = fPrice.value = fCond.value = ''; applyFilters(); });
+  paint(true);
+
+  /* ---------- steps with their own photos ---------- */
+  var howIn = $('#howIn'), howId = null;
+  function howShow(id, instant){
+    if (id === howId) return; howId = id;
+    var c = byId(id);
+    var l = mk('<div class="fl' + (instant ? ' now' : '') + '"><img alt="' + c.alt + '" width="960" height="720" decoding="async"></div>');
+    l.firstChild.src = IMG[id]; howIn.appendChild(l);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ l.classList.add('on'); }); });
+    setTimeout(function(){ var all = $$('.fl', howIn); all.forEach(function(o){ if (o !== all[all.length - 1]) o.remove(); }); }, instant ? 50 : 1100);
+    $('#howCap').innerHTML = '<a class="link" href="#' + c.id + '">' + c.name + ', ' + money(c.price) + '</a>';
+  }
+  var stepLis = $$('#steps li');
+  stepLis[0].classList.add('act'); howShow(stepLis[0].dataset.photo, true);
+  if ('IntersectionObserver' in window) {
+    var stepIO = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (!e.isIntersecting) return;
+        stepLis.forEach(function(li){ li.classList.toggle('act', li === e.target); });
+        howShow(e.target.dataset.photo);
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    stepLis.forEach(function(li){ stepIO.observe(li); });
+  }
+  light($('#howStage'));
+
+  /* ---------- phone: photos drift with the scroll ---------- */
+  var pxImgs = [];
+  function fillPhone(){
+    if (!mq.matches) return;
+    rows.forEach(function(r){ var im = $('.row-photo img', r); if (im && !im.src) { var c = byId(r.dataset.id); im.alt = c.alt; im.src = IMG[r.dataset.id]; pxImgs.push(im); } });
+    stepLis.forEach(function(li){ var im = $('.step-photo img', li); if (im && !im.src) { var c = byId(li.dataset.photo); im.alt = c.alt; im.src = IMG[li.dataset.photo]; pxImgs.push(im); } });
+  }
+  fillPhone();
+  mq.addEventListener ? mq.addEventListener('change', fillPhone) : mq.addListener(fillPhone);
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function(){
+      top.classList.toggle('scrolled', (window.scrollY || 0) > 8);
+      if (mq.matches && !reduce) {
+        var vh = window.innerHeight;
+        pxImgs.forEach(function(im){
+          var r = im.parentElement.getBoundingClientRect();
+          if (r.bottom < -80 || r.top > vh + 80) return;
+          var p = ((r.top + r.height / 2) - vh / 2) / vh;
+          im.style.transform = 'translate3d(0,' + (-p * 9).toFixed(2) + '%,0) scale(1.16)';
+        });
+      }
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* ---------- car page ---------- */
+  function others(c){
+    var same = CARS.filter(function(x){ return x.id !== c.id && x.body === c.body; });
+    var rest = CARS.filter(function(x){ return x.id !== c.id && x.body !== c.body; });
+    return same.concat(rest).slice(0, 3);
+  }
+  function renderCar(c){
+    var rowsHtml = [
+      ['Состояние', condText(c)], ['Двигатель', c.engine], ['Мощность', c.power + ' л.с.'],
+      ['Привод', c.drive], ['Коробка', c.gear], ['Кузов', c.bodyName]
+    ].map(function(r){ return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join('');
+    var more = others(c).map(function(o){
+      return '<li><a href="#' + o.id + '"><div class="ph"><img src="' + IMG[o.id] + '" alt="" loading="lazy"></div><div><strong>' + o.name + '</strong><span>' + money(o.price) + '</span></div></a></li>';
+    }).join('');
+    return '<div class="wrap">' +
+      '<a class="back" href="#catalog"><svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M17 6H2m0 0l5-5M2 6l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Все машины</a>' +
+      '<article class="cd-grid">' +
+        '<div class="stage cd-photo" id="cdStage"><div class="stage-in"><img src="' + IMG[c.id] + '" width="960" height="720" alt="' + c.alt + '"><span class="tag"><small>цена</small><b>' + money(c.price) + '</b></span></div></div>' +
+        '<div class="cd-info"><h1 style="--k:0">' + c.name + '</h1><p class="meta" style="--k:1">' + metaText(c) + '</p>' +
+          '<p class="about" style="--k:2">' + c.about + '</p>' +
+          '<p class="quote" style="--k:3">«' + c.note + '»<small>Менеджер салона</small></p>' +
+          '<dl class="specs" style="--k:4">' + rowsHtml + '</dl>' +
+          '<div class="cd-actions" style="--k:5"><a class="btn" href="#visit">Записаться на просмотр</a><a class="link" href="tel:+78003332211">Позвонить 8 (800) 333-22-11</a></div>' +
+        '</div>' +
+      '</article>' +
+      '<section class="more"><h2>Ещё из каталога</h2><ul class="mini">' + more + '</ul></section>' +
+    '</div>';
+  }
+  function setCarField(id){ var s = $('#v-car'); if (s) s.value = id || ''; }
+  function showCar(c){
+    view = 'car';
+    homeView.hidden = true; carView.hidden = false;
+    carView.innerHTML = renderCar(c);
+    light($('#cdStage'));
+    carView.classList.remove('view-in'); void carView.offsetWidth; carView.classList.add('view-in');
+    document.title = c.name + ' — Apex';
+    setCarField(c.id);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function showHome(id, first){
+    var was = view;
+    view = 'home';
+    carView.hidden = true; homeView.hidden = false; carView.innerHTML = '';
+    document.title = BASE_TITLE;
+    if (was === 'car') setCarField('');
+    var t = id && id !== 'home' ? document.getElementById(id) : null;
+    var instant = (was === 'car' || first);
+    if (t) t.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block: 'start' });
+    else if (id === 'home' || was === 'car') window.scrollTo({ top: 0, behavior: instant ? 'instant' : 'smooth' });
+    onScroll();
+  }
+  function vtSource(c){
+    var cands = [];
+    if (fCur === c.id) cands.push(filmIn);
+    if (stageId === c.id && !mq.matches && !showStage.hidden) cands.push(showIn);
+    var rp = $('.row[data-id="' + c.id + '"] .row-photo'); if (rp && mq.matches) cands.push(rp);
+    for (var i = 0; i < cands.length; i++) {
+      var r = cands[i].getBoundingClientRect();
+      if (r.width && r.bottom > 0 && r.top < window.innerHeight) return cands[i];
+    }
+    return null;
+  }
+  function openCar(c){
+    var src = (view === 'home' && !homeView.hidden) ? vtSource(c) : null;
+    if (src && document.startViewTransition && !reduce) {
+      src.style.viewTransitionName = 'carphoto';
+      try {
+        var vt = document.startViewTransition(function(){
+          src.style.viewTransitionName = '';
+          showCar(c);
+          var p = $('.cd-photo .stage-in'); if (p) p.style.viewTransitionName = 'carphoto';
+        });
+        vt.finished.then(function(){ var p = $('.cd-photo .stage-in'); if (p) p.style.viewTransitionName = ''; }, function(){});
+        return;
+      } catch (e) { src.style.viewTransitionName = ''; }
+    }
+    showCar(c);
+  }
+  function route(first){
+    var id = decodeURIComponent(location.hash.replace(/^#/, ''));
+    if (id === 'main') { main.focus({ preventScroll: true }); return; }
+    if (NO_SWITCH[id]) return;
+    var c = byId(id);
+    if (c) openCar(c); else showHome(id, first);
+  }
+  window.addEventListener('hashchange', function(){ route(false); });
+  route(true);
+
+  /* ---------- visit form ---------- */
+  var form = $('#visitForm'), err = $('#formErr'), wrap = $('#formWrap');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = $('#v-name').value.trim(), phone = $('#v-phone').value.trim();
+    var digits = phone.replace(/\D/g, '');
+    $('#v-name').removeAttribute('aria-invalid'); $('#v-phone').removeAttribute('aria-invalid');
+    if (!name) { err.textContent = 'Напишите, как к вам обращаться.'; $('#v-name').setAttribute('aria-invalid', 'true'); $('#v-name').focus(); return; }
+    if (digits.length < 10) { err.textContent = 'Введите номер полностью, например 8 900 123-45-67.'; $('#v-phone').setAttribute('aria-invalid', 'true'); $('#v-phone').focus(); return; }
+    err.textContent = '';
+    var c = byId($('#v-car').value);
+    wrap.innerHTML = '<div class="done" role="status"><h3>Спасибо, ' + name.replace(/[<>&]/g, '') + '</h3><p>Позвоним на ' + phone.replace(/[<>&]/g, '') + ', чтобы подтвердить время' + (c ? ' и подготовить ' + c.name : '') + '.</p></div>';
+  });
+
+  var mbar = $('#mbar');
+  if ('IntersectionObserver' in window && mbar) {
+    new IntersectionObserver(function(es){ mbar.classList.toggle('off', es[0].isIntersecting); }, { threshold: .25 }).observe($('#visit'));
+  }
+})();
+</script>
